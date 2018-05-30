@@ -3,10 +3,12 @@ import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import pylab as py
 # SciKitLearn is a useful machine learning utilities library
 import sklearn
-# The sklearn dataset module helps generating datasets
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
 from sklearn.neural_network import MLPClassifier
 
 dataset=pd.read_csv("train.csv")
@@ -42,11 +44,40 @@ X_sub=X_all[891:,:]
 from sklearn.model_selection import train_test_split
 X_train, X_testVal, y_train, y_testVal = train_test_split(X, y, test_size = 0.40, random_state = 1)
 X_val, X_test, y_val, y_test = train_test_split(X_testVal, y_testVal, test_size = 0.50, random_state = 1)
-
+xh=[]
+yf=[]
 #Training Classifier
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(10), random_state=1)
-clf.fit(X_train, y_train)
-y_pred_val=clf.predict(X_val)
+for h in range(2,15):
+    xh.append(h)
+    clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(h), random_state=1)
+    clf.fit(X_train, y_train)
+    y_pred_val=clf.predict(X_val)
+    cm = confusion_matrix(y_val, y_pred_val)
+    print 'confusion matrix :'
+    print cm
+    print 'f-score(weighted) is : '
+    f1=f1_score(y_val,y_pred_val,average='weighted')
+    print f1
+    yf.append(f1)
+    print xh
+    print yf
+plt.xlabel('Hidden layer neurons')
+plt.ylabel('fscore')
+plt.title('hidden layer neurons vs fscore')
+plt.plot(xh,yf)
+plt.savefig('hidden layer neurons vs fscore(validation).png')
+plt.show()
+'''
+
+ y_pred_val=clf.predict(X_val)
+    cm = confusion_matrix(y_val, y_pred_val)
+    print 'confusion matrix :'
+    print cm
+    print 'f-score(weighted) is : '
+    f1=f1_score(y_val,y_pred_val,average='weighted')
+    print f1
+
+
 
 
 from sklearn.metrics import confusion_matrix
@@ -55,8 +86,8 @@ print 'confusion matrix :'
 print cm
 from sklearn.metrics import f1_score
 print 'f-score(weighted) is : '
-print f1_score(y_val,y_pred_val,average='weighted')
-
+print f1_score(y_val,y_pred_val,average='weighted')'''
+'''
 y_pred_test=clf.predict(X_test)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred_test)
@@ -68,4 +99,4 @@ print f1_score(y_test,y_pred_test,average='weighted')
 y_sub=clf.predict(X_sub)
 dct={'PassengerId':pid,'Survived':y_sub}
 resdf=pd.DataFrame(data=dct)
-resdf.to_csv('result_10h.csv',index=False)
+resdf.to_csv('result.csv',index=False)'''
