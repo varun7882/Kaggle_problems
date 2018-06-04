@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sklearn
 # The sklearn dataset module helps generating datasets
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 dataset=pd.read_csv("train.csv")
 sub=pd.read_csv("test.csv")
@@ -31,6 +31,7 @@ X_sub=dssub.values
     
 X_all=np.concatenate((X,X_sub),axis=0)
 y=dataset.loc[:,'Survived'].values
+
 #Handling categorical data
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X = LabelEncoder()
@@ -46,9 +47,9 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.33, random
 #X_val, X_test, y_val, y_test = train_test_split(X_testVal, y_testVal, test_size = 0.50, random_state = 1)
 
 #Training Classifier
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(8), random_state=1)
-clf.fit(X_train, y_train)
-y_pred_val=clf.predict(X_val)
+rf = RandomForestClassifier()
+rf.fit(X_train, y_train)
+y_pred_val=rf.predict(X_val)
 
 
 from sklearn.metrics import confusion_matrix
@@ -60,7 +61,7 @@ print 'f-score(weighted) is : '
 print f1_score(y_val,y_pred_val,average='weighted')
 
 
-y_sub=clf.predict(X_sub)
+y_sub=rf.predict(X_sub)
 dct={'PassengerId':pid,'Survived':y_sub}
 resdf=pd.DataFrame(data=dct)
-resdf.to_csv('result_8h.csv',index=False)
+resdf.to_csv('result_dt.csv',index=False)
