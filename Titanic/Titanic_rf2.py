@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jun 20 18:23:11 2018
+
+@author: VaSrivastava
+"""
+
 import pandas as pd
 import math
 import numpy as np
@@ -6,7 +13,7 @@ import matplotlib.pyplot as plt
 # SciKitLearn is a useful machine learning utilities library
 import sklearn
 # The sklearn dataset module helps generating datasets
-from keras import regularizers
+from sklearn import svm
 from sklearn.preprocessing import OneHotEncoder
 dataset=pd.read_csv("train.csv")
 sub=pd.read_csv("test.csv")
@@ -41,8 +48,8 @@ X=X_all[:891,:]
 X_sub=X_all[891:,:]
 from sklearn.model_selection import train_test_split
 X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.33, random_state = 1)
-#Training Classifier
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(32), random_state=1)
+
+clf = svm.SVC(C=100,kernel='poly')
 clf.fit(X_train, y_train)
 y_pred_val=clf.predict(X_val)
 
@@ -58,4 +65,4 @@ print (f1_score(y_val,y_pred_val,average='weighted'))
 y_sub=clf.predict(X_sub)
 dct={'PassengerId':pid,'Survived':y_sub}
 resdf=pd.DataFrame(data=dct)
-resdf.to_csv('result_12hnew.csv',index=False)
+resdf.to_csv('result_svm.csv',index=False)

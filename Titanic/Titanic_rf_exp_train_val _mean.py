@@ -9,7 +9,7 @@ import sklearn
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
-from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 dataset=pd.read_csv("train.csv")
 sub=pd.read_csv("test.csv")
@@ -27,7 +27,7 @@ dssub.Age=dssub.Age.fillna(dssub.Age.median())
 #for Embarked
 ds.Embarked=ds.Embarked.fillna('S')
 dssub.Embarked=dssub.Embarked.fillna('S')
-X=ds.values
+X=ds.valuesS
 X_sub=dssub.values
 
 X_all=np.concatenate((X,X_sub),axis=0)
@@ -48,9 +48,9 @@ X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.33, random
 xh=[]
 yf=[]
 #Training Classifier
-for h in range(2,25):
-    xh.append(h)
-    clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(h), random_state=1)
+for t in range(500,10000,500):
+    xh.append(t)
+    clf = RandomForestClassifier(n_estimators=t)
     clf.fit(X_train, y_train)
     y_pred_train=clf.predict(X_train)
     cm = confusion_matrix(y_train, y_pred_train)
@@ -63,12 +63,12 @@ for h in range(2,25):
     cm = confusion_matrix(y_val, y_pred_val)
     #print 'confusion matrix :'
     #print cm
-    print 'f-scoreweighted) is : '
+    print 'f-scoreweighted (mean) is : '
     f1val=f1_score(y_val,y_pred_val,average='weighted')
     #print f1val
     fmean=(f1train+f1val)/2.0
     print fmean
-    print 'hidden ',h,'^'
+    print 'trees ',t,'^'
     yf.append(fmean)
     #print xh
     #print yf
