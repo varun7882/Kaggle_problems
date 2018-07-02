@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jun 27 23:32:37 2018
+
+@author: VaSrivastava
+"""
+import numpy as np
+import pandas as pd
+from sklearn import svm
+from sklearn.metrics import f1_score
+
+dataset=pd.read_csv("../preprocessedTrain.csv")
+sub=pd.read_csv("../preprocessedTest.csv")
+X=dataset.loc[:,['Pclass','Sex','Age','Fare','Embarked','IsAlone','Title']].values
+y=dataset.loc[:,['Survived']].values
+from sklearn.model_selection import train_test_split
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.33, random_state = 1)
+
+xh=[]
+
+yf=[]
+x=1
+while x<=2:
+    xh.append(x)
+    clf = svm.SVC(C=x)
+    clf.fit(X_train, y_train)
+    y_pred_train=clf.predict(X_train)
+    cm = confusion_matrix(y_train, y_pred_train)
+    #print 'confusion matrix :'
+    #print cm
+    #print 'f-scoreweighted) is : '
+    f1train=f1_score(y_train,y_pred_train,average='weighted')
+    #print f1train
+    y_pred_val=clf.predict(X_val)
+    cm = confusion_matrix(y_val, y_pred_val)
+    #print 'confusion matrix :'
+    #print cm
+    print ('f-scoreweighted) is : ')
+    f1val=f1_score(y_val,y_pred_val,average='weighted')
+    #print f1val
+    print (f1val)
+    print ('hidden ',x,'^')
+    yf.append(f1val)
+    x=x+0.1
+plt.xlabel('regularization')
+plt.ylabel('fscore')
+plt.title('regularization')
+plt.plot(xh,yf)
+plt.savefig('hidden layer neurons vs fscore(train_validation).png')
+plt.show()
